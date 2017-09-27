@@ -171,11 +171,11 @@ open class ESOpenSourceLicensesView : UIWebView {
             let path = bundle!.path(forResource: "opensource-licenses", ofType: "html")!
             var contents = try String(contentsOfFile: path, encoding: String.Encoding.utf8)
             
-            let bgRGB = _rgba(fromColor: self.backgroundColor!)
-            let blockRGB = _rgba(fromColor: self.licenseBackgroundColor)
-            let borderRGB = _rgba(fromColor: self.licenseBorderColor)
-            let headerTextRGB = _rgba(fromColor: self.headerTextColor)
-            let licenseTextRGB = _rgba(fromColor: self.licenseTextColor)
+            let bgRGB = self.backgroundColor!.htmlRGB
+            let blockRGB = self.licenseBackgroundColor.htmlRGB
+            let borderRGB = self.licenseBorderColor.htmlRGB
+            let headerTextRGB = self.headerTextColor.htmlRGB
+            let licenseTextRGB = self.licenseTextColor.htmlRGB
             
             let template = String(format: "<style> body { background-color: %@; margin:%.0fpx; } p { font-family:'%@'; margin-bottom:10px; display:block; background-color:%@; border:%.0fpx solid %@; font-size:%.0fpx; padding:5px; color:%@; } h2 { font-family: '%@'; font-size:%.0fpx; color:%@; } </style>",
                 bgRGB, self.padding,
@@ -193,28 +193,31 @@ open class ESOpenSourceLicensesView : UIWebView {
             
         } catch { }
     }
-    
-    // MARK: - Helpers
-    // ____________________________________________________________________________________________________________________
-    
-    /**
-    Helper function to convert a UIColor to an @"rgba()" string
-    
-    - parameter:  color	UIColor
-   
-    - returns: HTML String representation for the color > `rgba(#,#,#,#)`
-    
-    - author: Bas van Kuijck <bas@e-sites.nl>
-    - since: 1.1
-    - date: 19/08/2015
-    */
-    
-    fileprivate func _rgba(fromColor color: UIColor) -> NSString {
-        var red:CGFloat = 0
-        var green:CGFloat = 0
-        var blue:CGFloat = 0
-        var alpha:CGFloat = 0
-        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return NSString(format: "rgba(%.0f, %.0f, %.0f, %.0f)", red * 255, green * 255, blue * 255, alpha)
+}
+
+// https://stackoverflow.com/questions/28696862/what-is-the-best-shortest-way-to-convert-a-uicolor-to-hex-web-color-in-swift
+fileprivate extension UIColor {
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        if getRed(&r, green: &g, blue: &b, alpha: &a) {
+            return (r,g,b,a)
+        }
+        return (0, 0, 0, 0)
+    }
+
+    var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+        var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
+        if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            return (hue, saturation, brightness, alpha)
+        }
+        return (0,0,0,0)
+    }
+
+    var htmlRGB: String {
+        return String(format: "#%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255))
+    }
+
+    var htmlRGBA: String {
+        return String(format: "#%02x%02x%02x%02x", Int(rgba.red * 255), Int(rgba.green * 255), Int(rgba.blue * 255), Int(rgba.alpha * 255) )
     }
 }
