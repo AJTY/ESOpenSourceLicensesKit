@@ -62,7 +62,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 18/08/2015
     */
-    open var headerFont = UIFont(name: "HelveticaNeue", size: 16)!
+    open var headerFont = UIFont(name: "HelveticaNeue", size: 16)! {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The font to be used for the license text
@@ -72,7 +76,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 18/08/2015
     */
-    open var licenseFont = UIFont(name: "Menlo-Regular", size: 12)!
+    open var licenseFont = UIFont(name: "Menlo-Regular", size: 12)! {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The text color of the headers
@@ -82,7 +90,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 19/08/2015
     */
-    open var headerTextColor:UIColor = UIColor.black
+    open var headerTextColor:UIColor = UIColor.black {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The text color of the license text
@@ -92,7 +104,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 19/08/2015
     */
-    open var licenseTextColor = UIColor.black
+    open var licenseTextColor = UIColor.black {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The backgroundcolor of the license text
@@ -102,7 +118,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 19/08/2015
     */
-    open var licenseBackgroundColor = UIColor(white: 0.9333, alpha: 1.0)
+    open var licenseBackgroundColor = UIColor(white: 0.9333, alpha: 1.0) {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The border color of the license text
@@ -112,7 +132,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date: 19/08/2015
     */
-    open var licenseBorderColor = UIColor(white: 0.8666, alpha: 1.0)
+    open var licenseBorderColor = UIColor(white: 0.8666, alpha: 1.0) {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The width of the border of the license text
@@ -122,7 +146,11 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.1
     - date 19/08/2015
     */
-    open var licenseBorderWidth:CGFloat = 1.0
+    open var licenseBorderWidth:CGFloat = 1.0 {
+        didSet {
+            reload()
+        }
+    }
     
     /**
     The padding in the view
@@ -132,7 +160,17 @@ open class ESOpenSourceLicensesView : UIWebView {
     - since: 1.2
     - date: 19/08/2015
     */
-    open var padding:CGFloat = 10.0
+    open var padding:CGFloat = 10.0 {
+        didSet {
+            reload()
+        }
+    }
+
+    override open var backgroundColor: UIColor? {
+        didSet {
+            reload()
+        }
+    }
     
     // MARK: - Reloading
     // ____________________________________________________________________________________________________________________
@@ -177,7 +215,7 @@ open class ESOpenSourceLicensesView : UIWebView {
             let headerTextRGB = self.headerTextColor.htmlRGB
             let licenseTextRGB = self.licenseTextColor.htmlRGB
             
-            let template = String(format: "<style> body { background-color: %@; margin:%.0fpx; } p { font-family:'%@'; margin-bottom:10px; display:block; background-color:%@; border:%.0fpx solid %@; font-size:%.0fpx; padding:5px; color:%@; } h2 { font-family: '%@'; font-size:%.0fpx; color:%@; } </style>",
+            let template = String(format: "<style> body { background-color: %@; margin:%.0fpx; } p{ font-family:'%@'; margin-bottom:10px; display:block; background-color:%@; border:%.0fpx solid %@; font-size:%.0fpx; padding:5px; color:%@; } h2 { font-family: '%@'; font-size:%.0fpx; color:%@; } </style>",
                 bgRGB, self.padding,
                 self.licenseFont.fontName, blockRGB, self.licenseBorderWidth, borderRGB, self.licenseFont.pointSize, licenseTextRGB,
                 self.headerFont.fontName, self.headerFont.pointSize, headerTextRGB)
@@ -191,7 +229,9 @@ open class ESOpenSourceLicensesView : UIWebView {
 
             self.loadHTMLString(contents, baseURL: nil)
             
-        } catch { }
+        } catch let error {
+            print("ESOpenSourceLicenseKit error: \(error.localizedDescription)")
+        }
     }
 }
 
